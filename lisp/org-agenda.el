@@ -7517,7 +7517,13 @@ the same tree node, and the headline of the tree node in the Org-mode file."
        (goto-char pos)
        (if (not (org-at-timestamp-p))
 	   (error "Cannot find time stamp"))
-       (org-timestamp-change arg (or what 'day)))
+       (org-timestamp-change arg (or what 'day))
+       (when (org-at-date-range-p)
+         (let ((end org-last-changed-timestamp))
+           (re-search-backward org-tr-regexp-both)
+           (org-timestamp-change arg (or what 'day))
+           (setq org-last-changed-timestamp
+		 (concat org-last-changed-timestamp "--" end)))))
      (org-agenda-show-new-time marker org-last-changed-timestamp))
     (message "Time stamp changed to %s" org-last-changed-timestamp)))
 
